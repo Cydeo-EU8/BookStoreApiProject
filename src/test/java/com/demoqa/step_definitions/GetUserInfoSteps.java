@@ -24,7 +24,7 @@ public class GetUserInfoSteps {
 
     Response response;
     String requestUserName;
-    String token;
+    public static String token;
     String responseUserID;
     String responseUserName;
     int responseStatusCode;
@@ -89,4 +89,6 @@ public class GetUserInfoSteps {
         userBooksISBN_List = jsonPath.getList("books.isbn");
         Assert.assertTrue(allBooksISBN_List.containsAll(userBooksISBN_List));
     }
+
+
 }

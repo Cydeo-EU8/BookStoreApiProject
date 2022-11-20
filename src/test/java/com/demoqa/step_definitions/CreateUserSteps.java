@@ -36,7 +36,7 @@ public class CreateUserSteps {
     @When("User sends a POST request to create user end point")
     public void user_sends_a_POST_request_to_create_user_end_point() {
         requestUserName = ConfigurationReader.get("userName");
-        requestPassword = ConfigurationReader.get("passWord");
+
 
         // Below is our creating request to API
         response = given().accept(ContentType.JSON)
@@ -59,7 +59,7 @@ public class CreateUserSteps {
 
     @Then("Verifies status code username and userID is NOT null")
     public void verifies_status_code_username_and_userID_is_NOT_null() {
-       assertEquals(200,responseStatusCode);
+       assertEquals(201,responseStatusCode);
        assertEquals(requestUserName,responseUserName);
        assertNotNull(responseUserID);
      //  assertFalse(responseUserID == null); // same with below

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
         features = "src/test/resources/features",
         glue = "com/demoqa/step_definitions",
         dryRun = false,
-        tags = "@wip"
+        tags = "@wip2"
 )
 public class Runner {
 }

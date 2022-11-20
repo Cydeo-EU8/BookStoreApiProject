@@ -1,9 +1,9 @@
 package com.demoqa.step_definitions;
 
-import com.demoqa.pages.CreateRequestBasePage;
 import com.demoqa.pages.ResponseApiPage;
 import com.demoqa.utilities.BookStoreApiUtils;
 import com.demoqa.utilities.ConfigurationReader;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static io.restassured.RestAssured.*;
@@ -14,17 +14,24 @@ import java.util.List;
 import java.util.Map;
 
 
-public class CreateUserSteps extends CreateRequestBasePage {
+public class CreateUserSteps {
     Response response;
     String requestUserName;
     String requestPassword;
     String responseUserID;
     String responseUserName;
     int responseStatusCode;
-    List<String> books;
+    List<Map<String,Object>> books;
 
 
     ResponseApiPage responsePage = new ResponseApiPage();
+
+    @Before
+    public void setUpRequest(){
+        baseURI = ConfigurationReader.get("baseUrl");
+        basePath = ConfigurationReader.get("apiUser");
+    }
+
 
     @When("User sends a POST request to create user end point")
     public void user_sends_a_POST_request_to_create_user_end_point() {
@@ -47,14 +54,18 @@ public class CreateUserSteps extends CreateRequestBasePage {
         BookStoreApiUtils.storeInfoToFile(responseUserID);
         responseStatusCode = response.statusCode();
         responseUserName = (String) responseMap.get("username");
-        books = (List<String>) responseMap.get("books");
+        books = (List<Map<String,Object>>) responseMap.get("books");
     }
 
     @Then("Verifies status code username and userID is NOT null")
     public void verifies_status_code_username_and_userID_is_NOT_null() {
        assertEquals(200,responseStatusCode);
        assertEquals(requestUserName,responseUserName);
-       assertFalse(responseUserID == null); // same with below
+       assertNotNull(responseUserID);
+     //  assertFalse(responseUserID == null); // same with below
     // assertTrue(responseUserID != null);
+
     }
+
+
 }

@@ -2,28 +2,27 @@ package com.demoqa.step_definitions;
 
 import com.demoqa.pages.CreateRequestBasePage;
 import com.demoqa.pages.ResponseApiPage;
+import com.demoqa.utilities.BookStoreApiUtils;
 import com.demoqa.utilities.ConfigurationReader;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import static io.restassured.RestAssured.*;
-
-
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import static org.junit.Assert.*;
+import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+
 
 public class CreateUserSteps extends CreateRequestBasePage {
     Response response;
     String requestUserName;
     String requestPassword;
     String responseUserID;
-    File outFile;
-    PrintWriter output;
+    String responseUserName;
+    int responseStatusCode;
+    List<String> books;
+
 
     ResponseApiPage responsePage = new ResponseApiPage();
 
@@ -40,31 +39,22 @@ public class CreateUserSteps extends CreateRequestBasePage {
 
     }
 
-    @When("User captures status code userID username information")
-    public void user_captures_status_code_userID_username_information() throws FileNotFoundException {
+    @When("User captures status code, userID, username and books information")
+    public void user_captures_status_code_userID_username_information() {
         // We are de-serializing response object to get UserID
         Map<Object,Object> responseMap = response.as(Map.class);
         responseUserID = (String) responseMap.get("userID");
-        // writing userID to a regular resources file
-        // defining a file: we need to provide absolute path of the file
-        outFile = new File("C:\\Users\\Oscar\\IdeaProjects\\BookStoreApi\\src\\test\\resources\\userID.out");
-        if(outFile.exists()){
-            outFile.delete();
-        }
-        output = new PrintWriter(outFile);
-        output.println(responseUserID);
-        output.close();  // this step crucial to actually finalize writing function
-
-
+        BookStoreApiUtils.storeInfoToFile(responseUserID);
+        responseStatusCode = response.statusCode();
+        responseUserName = (String) responseMap.get("username");
+        books = (List<String>) responseMap.get("books");
     }
 
     @Then("Verifies status code username and userID is NOT null")
-    public void verifies_status_code_username_and_userID_is_NOT_null() throws FileNotFoundException {
-        // Read the file for userID
-        outFile = new File("C:\\Users\\Oscar\\IdeaProjects\\BookStoreApi\\src\\test\\resources\\userID.out");
-        Scanner scanner = new Scanner(outFile);
-        String userID = scanner.next();
-        System.out.println("userID = " + userID);
-
+    public void verifies_status_code_username_and_userID_is_NOT_null() {
+       assertEquals(200,responseStatusCode);
+       assertEquals(requestUserName,responseUserName);
+       assertFalse(responseUserID == null); // same with below
+    // assertTrue(responseUserID != null);
     }
 }
